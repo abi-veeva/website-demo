@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veeva Link - Analytics and Insights Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background similar to screenshot */
+            color: #e2e8f0; /* Light text color */
+        }
+        .theme-box {
+            background-color: #2d3748; /* Darker gray for theme boxes */
+            border-radius: 0.5rem; /* Rounded corners */
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            min-height: 80px; /* Ensure boxes have a minimum height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-box:hover {
+            transform: translateY(-3px);
+            background-color: #4a5568; /* Slightly lighter on hover */
+        }
+        .abstract-link {
+            color: #63b3ed; /* Blue for links */
+            text-decoration: underline;
+            /* Ensure the link itself doesn't have extra padding that interferes with box click */
+            display: inline-block;
+        }
+        .abstract-link:hover {
+            color: #90cdf4;
+        }
+        .summary-section {
+            background-color: #2d3748;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .abstract-box {
+            background-color: #2d3748; /* Darker gray for abstract boxes */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+            cursor: pointer; /* Indicate clickable */
+            transition: background-color 0.2s;
+        }
+        .abstract-box:hover {
+            background-color: #4a5568; /* Slightly lighter on hover */
+        }
+        .abstract-summary-content {
+            white-space: pre-wrap; /* Preserve line breaks from the summary text */
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #4a5568; /* Separator for summary */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto relative">
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center mb-4">
+                <!-- Veeva Link Logo -->
+                <div class="text-3xl font-bold text-blue-400 mr-2">Veeva Link</div>
+                <!-- Analytics and Insights Text -->
+                <div class="text-xl text-gray-400">Analytics and Insights</div>
+            </div>
+            <div class="flex items-center justify-center mb-2">
+                <h1 class="text-3xl md:text-4xl font-semibold text-white inline-block">United European Gastroenterology (UEG) - Berlin 2025</h1>
+                <!-- UEG Logo added next to the H1 text, with updated src and size -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/UEG_Logo_RGB_300dpi.jpg" alt="UEG Logo" class="h-20 w-auto ml-4" onerror="this.onerror=null;this.src='https://placehold.co/160x80/2d3748/e2e8f0?text=UEG%20Logo';">
+            </div>
+            <p class="text-gray-400 text-lg mb-4">A synthesis of 15 key abstracts from UEG 2025</p>
+            <p class="text-gray-400 text-sm">Select Topics for associated abstracts and their summaries. Click on abstract titles to access the source.</p>
+        </header>
+
+        <!-- Themes Grid -->
+        <div id="themes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+            <!-- Theme boxes will be dynamically loaded here by JavaScript -->
+        </div>
+
+        <!-- Summary and Abstract Details Section -->
+        <div id="details-section" class="summary-section hidden">
+            <h2 id="theme-title" class="text-2xl font-bold text-white mb-4"></h2>
+            <div id="theme-summary" class="text-gray-300 leading-relaxed mb-4"></div>
+            <div id="abstract-links" class="mb-4">
+                <span class="font-semibold text-gray-400">Associated Abstracts: </span>
+                <!-- Abstract links/boxes will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dummy data from the CSV file
+        const csvData = `Top Themes,Summary,Hyperlink abstracts,,
+,,Abstract 1,Abstract 2,Abstract 3
+1: Multiple Myeloma Treatment and Outcomes in Patients:,"This topic is primarily focused on the treatment and outcomes of multiple myeloma (MM) patients using modern therapies. The key emphasis is on MM, with the documents detailing studies of disease characteristics, treatment approaches, and patient outcomes in both young and older patients heavily pretreated with different therapies.
+
+The first document discusses a study on young MM patients in Canada. It stresses the importance of understanding the disease characteristics and outcomes in this demographic given the high number of years lost due to MM, particularly as these younger patients tend to be underrepresented in clinical trials. In the study, high-risk cytogenetics were defined, and survival analyses were conducted. The document highlighted that with a median follow-up, the overall survival had not yet been reached, and progression-free survival was less than satisfactory, indicating a need for more effective treatments for this demographic. [Abstract 1]
+
+The next two documents shift focus to the treatment of relapsed and refractory multiple myeloma (RRMM) patients using Teclistamab, a B-cell maturation antigen (BCMA) x CD3 bispecific antibody. Both documents report on real-world safety and efficacy data of Teclistamab. The documents highlight that treatment with Teclistamab resulted in substantial overall response and and progression-free survival rates, even in heavily pretreated RRMM patients with high-risk disease, extramedullary disease, high disease burden, hematopoietic or renal impairment. Although Teclistamab appears promising, the need for continued trial data and real-world studies are underscored. [Abstract 2]
+
+From a commercial or strategic standpoint for a pharmaceutical company, this topic indicates a clear need for developing improved, targeted treatments for MM, particularly focused on younger adults and patients with RRMM, and potentially prioritising treatments with promising real-world results like Teclistamab. The data also emphasise the importance of real-world studies and the inclusion of underrepresented patient groups in clinical trials, which could improve patient outcomes and expand market access for new treatments. [Abstract 3]
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper174338.html,https://ash.confex.com/ash/2023/webprogram/Paper180032.html,https://ash.confex.com/ash/2023/webprogram/Paper180032.html
+"2: SCD Pain Variability, Treatment Impact, and Early Life Complications:","This topic is primarily focused on Sickle Cell Disease (SCD), a genetic disorder characterized by the presence of sickle-shaped red blood cells, which can lead to acute pain episodes - the most common complication of SCD. The discussion revolves around the study of the variability in gene expression in individuals with SCD during periods of baseline health and acute pain. The findings indicate that gene expression does not significantly change for most individuals between periods of health and pain, signifying fixed gene expression. However, there is wide interindividual variability in gene expression, possibly accounting for the differences in phenotypic pain expression despite the inheriting the same genetic defect [Abstract 1]
+
+The second document discusses a study on the effect of Voxelotor - a medication used to inhibit HbS polymerization, on patients with SCD. While Voxelotor demonstrates improvements in anemia and reduces hemolysis, the administration of the drug also leads to a decrease in Hemoglobin F (HbF) levels. The authors propose this could be due to reduced stress erythropoiesis or the loss of HbF-related survival advantage for SCD red blood cells. [Abstract 2]
+
+Finally, the last document provides an overview of the morbidity and mortality resulting from SCD in children, specifically within the Netherlands. After the implementation of newborn SCD screening, a noticeable number of SCD-related complications occurred within the first four years of life, emphasizing the importance of early intervention, parental education, and specialized clinical care Link. [Abstract 3]
+
+From a pharmaceutical perspective, this topic highlights potential areas for further research and intervention. Understanding the gene expression variability and its impact on pain might provide novel insights into individualized treatment plans. The findings on Voxelotor signal the need for a balance between its therapeutic benefits and potential side effects on HbF levels, thereby providing opportunities for drug modification or development of adjunct therapies. Finally, research on pediatric SCD underscores the importance of early detection and preventive care, which could be key strategic areas for pharmaceutical interventions aimed at improving patient outcomes.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper179802.html,https://ash.confex.com/ash/2023/webprogram/Paper179961.html,https://ash.confex.com/ash/2023/webprogram/Paper190280.html
+3: GVHD Prophylaxis in Hematopoietic Cell Transplantation:,"This topic primarily revolves around GVHD or Graft Versus Host Disease, its prophylaxis and its involvement in hematopoietic cell transplantation (HCT). GVHD can occur when white blood cells from a donor (bone marrow or blood stem cells) attack tissues of the recipient, and is one of the major complications of HCT. The documents indicate that finding a suitable donor is a major hurdle, particularly for underrepresented ethnic groups and mixed race patients.
+
+The discussions reflect strategies to improve outcomes through procedures like Post-Transplant Cyclophosphamide (PTCy) based GVHD prophylaxis, used in peripheral blood stem cell (PBSC) transplantation from mismatched unrelated donors. The analysis shows that PTCy-based prophylaxis demonstrates promising overall survival rates and reduced incidence of chronic GVHD, outperforming other prophylaxis methods. Furthermore, the usage of Anti-Thymocyte Globulin (ATG) in conjunction with PTCy is evaluated for efficacy in GVHD prophylaxis, particularly in the context of transplantations from alternative donors.
+
+Another recurring theme is the impact of donor type on outcomes of HCT, with studies suggesting that matched related/unrelated donors (MRD/MUD) offer superior outcomes due to reduced non-relapse mortality (NRM). Despite these insights, the fact remains that the occurrence of GVHD continues to be a significant factor affecting the success and accessibility of HCT.
+
+For pharmaceutical company, these insights could drive the development of new drugs or therapies that can help mitigate the risk of GVHD, or improve the effectiveness of prophylactic measures. They could also potentially uncover avenues to increase the pool of suitable donors for HCT, helping to make these procedures more accessible for patients who require them, ultimately improving patient outcomes.
+
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper187687.html,https://ash.confex.com/ash/2023/webprogram/Paper186196.html,https://ash.confex.com/ash/2023/webprogram/Paper187909.html
+4: CAR T-Cell Therapy in Acute Myeloid Leukemia and Tumor Environment Interaction,"This topic is primarily about the investigation of the potential and limitations of Chimeric Antigen Receptor (CAR) T-cell therapy in the treatment of acute myeloid leukemia (AML) and tumor malignancies, principally targeting cells with the CD19 and CD33 antigens. The documents provide insights into various studies examining how CAR T-cell activity, within a host's endogenous immune system, can be influenced by normal myelopoiesis and other components of the immune response.
+
+The first document discusses a study that explored the interplay between CAR T-cell activity and normal myelopoiesis. The study employed prototypical CAR T cells targeted at B cells (CD19) and myeloid cells (CD33), using a standard 2nd generation CAR design with 4-1BB and CD3ζ costimulatory domains. It was found that while monocytes enhanced the short-term activity of both CART19 and CART33 cells, their continuous presence hampered the long-term activity of CART33 cells. The document concluded that targeting normal myeloid cells could be detrimental to CAR T-cell activity due to the potential for interference in normal immune responses and subsequent loss of tumor control.
+
+The second document, from a clinical trial ACIT001/EXC002, analyses the correlation between the biological characteristics of manufactured CAR T cells and relevant clinical outcomes in aggressive non-Hodgkin lymphoma (NHL) and acute lymphoblastic leukemia (ALL) patients. It is suggested that the degree of CAR T-cell exhaustion following infusion was found to be a significant determinant of therapy response, while ex vivo cytotoxicity was not a significant predictor.
+
+The third document investigates the influence of the tumor microenvironment on the activity of anti-CD19 CAR T cells in B-cell Acute Lymphoblastic Leukemia (B-ALL). It suggests that the bone marrow microenvironment might contain factors that can impair the activity of CAR T cells, potentially through activating inhibitory pathways and molecules, thereby exacerbating cell exhaustion and hindering the anti-tumor effects of the therapy.
+
+For a pharmaceutical company, this topic's strategic relevance lies in the potential to improve CAR T cell therapy results in cancer treatment. The insights provided could be invaluable in developing improved immunotherapies, with a focus on adjusting CAR T-cell interaction with normal hematopoietic cells or manipulating the tumor microenvironment. Also, the identification of significant determinants of therapy response, such as T cell exhaustion, could be invaluable in patient stratification and determining treatment regimens.
+
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180608.html,https://ash.confex.com/ash/2023/webprogram/Paper187663.html,https://ash.confex.com/ash/2023/webprogram/Paper186015.html
+"5: Venetoclax Treatment in AML Patients: Efficacy and Survival Outcomes", "This topic focuses on the efficacy and survival outcomes of Venetoclax treatment in patients with Acute Myeloid Leukemia (AML). The documents highlight studies assessing the effectiveness of Venetoclax, often in combination with other agents, in different AML patient populations, including those with relapsed/refractory AML and newly diagnosed AML.
+
+The first document discusses a study on the combination of Venetoclax and Gilteritinib in patients with relapsed/refractory FLT3-mutated AML. The study found that this combination therapy resulted in high response rates and and progression-free survival rates, even in heavily pretreated RRMM patients with high-risk disease, extramedullary disease, high disease burden, hematopoietic or renal impairment. Although Teclistamab appears promising, the need for continued trial data and real-world studies are underscored. [Abstract 2]
+
+From a commercial or strategic standpoint for a pharmaceutical company, this topic indicates a clear need for developing improved, targeted treatments for MM, particularly focused on younger adults and patients with RRMM, and potentially prioritising treatments with promising real-world results like Teclistamab. The data also emphasise the importance of real-world studies and the inclusion of underrepresented patient groups in clinical trials, which could improve patient outcomes and expand market access for new treatments. [Abstract 3]
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180000.html,https://ash.confex.com/ash/2023/webprogram/Paper180001.html,https://ash.confex.com/ash/2023/webprogram/Paper180002.html
+"6: DLBCL Clinical Interactions and Prognosis: ctDNA, Tumor Microenvironment, and Gene Expression", "This topic delves into the clinical interactions and prognostic factors in Diffuse Large B-cell Lymphoma (DLBCL), with a focus on circulating tumor DNA (ctDNA), the tumor microenvironment, and gene expression profiles. The documents explore how these elements influence disease progression, treatment response, and patient outcomes.
+
+The first document examines the role of ctDNA in predicting outcomes in DLBCL patients undergoing R-CHOP chemotherapy. It suggests that early ctDNA clearance is associated with better prognosis, while persistent ctDNA indicates a higher risk of relapse. This highlights ctDNA as a valuable biomarker for treatment monitoring. [Abstract 1]
+
+The second document investigates the impact of the tumor microenvironment on the efficacy of CAR T-cell therapy in relapsed/refractory DLBCL. It indicates that specific immune cell populations and cytokine profiles within the microenvironment can influence CAR T-cell persistence and anti-tumor activity, suggesting potential targets for improving therapy. [Abstract 2]
+
+The third document explores gene expression profiling to identify molecular subtypes of DLBCL with distinct clinical behaviors and prognoses. It suggests that integrating gene expression data with clinical features can improve risk stratification and guide personalized treatment approaches. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing more effective and personalized therapies for DLBCL. Understanding the prognostic value of ctDNA and the influence of the tumor microenvironment can lead to the development of novel diagnostic tools and targeted therapies. Furthermore, identifying specific gene expression profiles can aid in patient selection for clinical trials and the development of companion diagnostics, ultimately improving patient outcomes and market positioning.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180003.html,https://ash.confex.com/ash/2023/webprogram/Paper180004.html,https://ash.confex.com/ash/2023/webprogram/Paper180005.html
+"7: AML Leukemia: Cell and Gene Expression in Chemoresistance and Treatment Strategies", "This topic explores the role of cell and gene expression in chemoresistance and treatment strategies for Acute Myeloid Leukemia (AML). The documents investigate the molecular mechanisms underlying drug resistance and identify potential therapeutic targets to overcome these challenges.
+
+The first document discusses a study on the role of specific gene mutations in mediating resistance to chemotherapy in AML. It suggests that certain genetic alterations activate signaling pathways that promote cell survival and proliferation, thereby contributing to treatment failure. [Abstract 1]
+
+The second document explores the impact of the bone marrow microenvironment on AML chemoresistance. It indicates that interactions between leukemic cells and stromal cells within the microenvironment can protect AML cells from chemotherapy-induced apoptosis, highlighting the importance of targeting these interactions. [Abstract 2]
+
+The third document investigates novel therapeutic strategies to overcome chemoresistance in AML by targeting specific cell surface markers and signaling pathways. It suggests that combination therapies that simultaneously inhibit multiple resistance mechanisms can improve treatment efficacy and patient outcomes. [Abstract 3]
+
+For a pharmaceutical company, these insights are critical for developing new drugs and treatment strategies to overcome chemoresistance in AML. Identifying the molecular drivers of resistance can lead to the development of targeted therapies that specifically inhibit these mechanisms. Furthermore, understanding the role of the tumor microenvironment can guide the development of combination therapies that disrupt protective interactions, ultimately improving treatment response and patient survival.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180006.html,https://ash.confex.com/ash/2023/webprogram/Paper180007.html,https://ash.confex.com/ash/2023/webprogram/Paper180008.html
+"8: Patient Survival and Treatment in Lymphoma, Emphasizing on FL and DLBCL", "This topic focuses on patient survival and treatment outcomes in lymphoma, with a particular emphasis on Follicular Lymphoma (FL) and Diffuse Large B-cell Lymphoma (DLBCL). The documents explore various therapeutic approaches, prognostic factors, and real-world outcomes in these common lymphoma subtypes.
+
+The first document discusses a study on the long-term outcomes of FL patients treated with bendamustine-rituximab. It suggests that this combination therapy provides durable responses and improved progression-free survival, making it a valuable treatment option for FL. [Abstract 1]
+
+The second document investigates the impact of novel agents on the survival of relapsed/refractory DLBCL patients. It highlights that the introduction of new therapies, such as CAR T-cell therapy and bispecific antibodies, has significantly improved outcomes in this challenging patient population. [Abstract 2]
+
+The third document explores real-world treatment patterns and survival trends in older patients with DLBCL. It suggests that treatment intensity and adherence to guidelines can influence outcomes, emphasizing the importance of personalized treatment approaches for elderly patients. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for understanding the evolving treatment landscape in lymphoma and identifying unmet medical needs. The data support the development of novel therapies that can improve survival outcomes and quality of life for FL and DLBCL patients. Furthermore, understanding real-world treatment patterns can inform market access strategies and guide the development of educational programs for healthcare providers.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180009.html,https://ash.confex.com/ash/2023/webprogram/Paper180010.html,https://ash.confex.com/ash/2023/webprogram/Paper180011.html
+"9: Hematopoietic Stem Cells (HSCs) in Bone Marrow: Cell Activation and Aging Effects", "This topic explores the characteristics and behavior of Hematopoietic Stem Cells (HSCs) in the bone marrow, with a focus on cell activation and the effects of aging. The documents investigate how these factors influence HSC function, self-renewal, and differentiation potential.
+
+The first document discusses a study on the impact of inflammation on HSC activation and exhaustion. It suggests that chronic inflammatory signals can lead to premature HSC aging and impaired regenerative capacity, highlighting the importance of mitigating inflammation in hematopoietic disorders. [Abstract 1]
+
+The second document investigates the role of specific signaling pathways in regulating HSC quiescence and self-renewal. It indicates that dysregulation of these pathways can lead to aberrant HSC proliferation and contribute to the development of myeloid malignancies. [Abstract 2]
+
+The third document explores the effects of aging on HSC function and susceptibility to malignant transformation. It suggests that aged HSCs exhibit altered epigenetic landscapes and increased genomic instability, making them more prone to developing leukemia. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing therapies that target HSC function and combat age-related hematopoietic decline. Understanding the mechanisms of HSC activation and aging can lead to the development of novel drugs that promote healthy hematopoiesis, prevent bone marrow failure, and reduce the risk of leukemia. Furthermore, targeting specific signaling pathways in HSCs could offer new avenues for treating myeloid malignancies.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180012.html,https://ash.confex.com/ash/2023/webprogram/Paper180013.html,https://ash.confex.com/ash/2023/webprogram/Paper180014.html
+"10: Classical Hodgkin Lymphoma Treatment with Brentuximab Vedotin and PD-1 Blockade in Combined Patients", "This topic focuses on the treatment of Classical Hodgkin Lymphoma (cHL) with Brentuximab Vedotin (BV) and PD-1 blockade, particularly in combined patient populations. The documents explore the efficacy and safety of these agents, often in combination, in different stages and settings of cHL.
+
+The first document discusses a study on the combination of BV and nivolumab (a PD-1 inhibitor) in relapsed/refractory cHL patients. It suggests that this combination therapy results in high response rates and durable remissions, making it a promising option for patients who have failed prior treatments. [Abstract 1]
+
+The second document explores the use of BV as frontline therapy in combination with chemotherapy for advanced cHL. It indicates that adding BV to standard chemotherapy regimens improves progression-free survival and overall survival, leading to better outcomes for newly diagnosed patients. [Abstract 2]
+
+The third document investigates the real-world outcomes of BV in cHL patients, including those with comorbidities and prior transplant. It suggests that BV is effective and well-tolerated in a broad range of patients, highlighting its versatility in clinical practice. [Abstract 3]
+
+For a pharmaceutical company, these insights are critical for advancing treatment strategies for cHL. The data support the continued development and investigation of BV and PD-1 inhibitors, both as monotherapy and in combination, to improve patient outcomes. Furthermore, understanding real-world effectiveness can inform market access strategies and guide the development of educational programs for healthcare providers.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180015.html,https://ash.confex.com/ash/2023/webprogram/Paper180016.html,https://ash.confex.com/ash/2023/webprogram/Paper180017.html
+"11: CLL Patient Treatment with BTK Inhibitor Ibrutinib: Median Duration & MRD Achievement", "This topic focuses on the treatment of Chronic Lymphocytic Leukemia (CLL) patients with the BTK inhibitor Ibrutinib, specifically examining its median duration of treatment and the achievement of measurable residual disease (MRD) negativity. The documents explore the long-term efficacy and impact of Ibrutinib on CLL outcomes.
+
+The first document discusses a study on the long-term follow-up of CLL patients treated with Ibrutinib. It suggests that continuous Ibrutinib therapy leads to durable responses and prolonged progression-free survival, even in high-risk patients. [Abstract 1]
+
+The second document investigates the achievement of MRD negativity in CLL patients treated with Ibrutinib. It indicates that achieving MRD negativity is associated with improved clinical outcomes, highlighting the importance of deep responses in CLL. [Abstract 2]
+
+The third document explores the real-world effectiveness of Ibrutinib in CLL patients, including those with comorbidities and prior treatments. It suggests that Ibrutinib is well-tolerated and effective in a broad range of patients, reinforcing its role as a key treatment option. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for understanding the long-term benefits and real-world effectiveness of Ibrutinib in CLL. The data support the continued use and development of BTK inhibitors for CLL treatment. Furthermore, the emphasis on MRD achievement highlights the importance of developing therapies that can achieve deep and durable responses, which can inform future drug development and clinical trial designs.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180018.html,https://ash.confex.com/ash/2023/webprogram/Paper180019.html,https://ash.confex.com/ash/2023/webprogram/Paper180020.html
+"12: VTE Risk and Anticoagulation in Cancer Patients", "This topic focuses on the risk of Venous Thromboembolism (VTE) and the use of anticoagulation in cancer patients. The documents explore the incidence of VTE in various cancer types, identify risk factors, and evaluate the effectiveness and safety of different anticoagulant strategies.
+
+The first document discusses a study on the incidence of VTE in patients with newly diagnosed pancreatic cancer. It suggests that pancreatic cancer patients have a high risk of VTE, and prophylactic anticoagulation can reduce this risk without significantly increasing bleeding complications. [Abstract 1]
+
+The second document investigates the effectiveness of direct oral anticoagulants (DOACs) for VTE treatment in cancer patients compared to low molecular weight heparin (LMWH). It indicates that DOACs are non-inferior to LMWH in preventing recurrent VTE and may offer a more convenient treatment option. [Abstract 2]
+
+The third document explores the risk factors for VTE in hospitalized cancer patients, including specific cancer types, chemotherapy regimens, and comorbidities. It suggests that a comprehensive risk assessment can identify high-risk patients who would benefit from VTE prophylaxis. [Abstract 3]
+
+For a pharmaceutical company, these insights are critical for developing and optimizing anticoagulation strategies for cancer patients. The data highlight the significant unmet need for effective VTE prevention and treatment in this vulnerable population. This can lead to the development of new anticoagulant drugs or improved guidelines for their use, ultimately reducing VTE-related morbidity and mortality in cancer patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180021.html,https://ash.confex.com/ash/2023/webprogram/Paper180022.html,https://ash.confex.com/ash/2023/webprogram/Paper180023.html
+"13: Mantle Cell Lymphoma Treatment, Efficacy and Safety of BTK Inhibitors in Patients", "This topic focuses on the treatment of Mantle Cell Lymphoma (MCL), specifically examining the efficacy and safety of Bruton's tyrosine kinase (BTK) inhibitors in patients. The documents explore the role of BTK inhibitors as a cornerstone of MCL therapy, both as monotherapy and in combination regimens.
+
+The first document discusses a study on the long-term outcomes of patients with relapsed/refractory MCL treated with Ibrutinib. It suggests that Ibrutinib provides durable responses and prolonged progression-free survival, establishing its role as a standard of care in this setting. [Abstract 1]
+
+The second document investigates the efficacy and safety of second-generation BTK inhibitors (e.g., acalabrutinib, zanubrutinib) in MCL patients. It indicates that these newer agents offer similar efficacy to Ibrutinib with potentially improved tolerability profiles, providing alternative options for patients. [Abstract 2]
+
+The third document explores the use of BTK inhibitors in combination with other agents (e.g., venetoclax, rituximab) for MCL. It suggests that combination therapies can achieve deeper and more durable responses, particularly in high-risk patients. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for advancing MCL treatment strategies. The data support the continued development and optimization of BTK inhibitors, including next-generation compounds and combination regimens, to improve patient outcomes. Understanding the safety and efficacy profiles of different BTK inhibitors can inform clinical trial design and market positioning, ultimately benefiting MCL patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180024.html,https://ash.confex.com/ash/2023/webprogram/Paper180025.html,https://ash.confex.com/ash/2023/webprogram/Paper180026.html
+"14: Hemophilia A Management: FVIII, Emicizumab, and Bleeding Prevention", "This topic focuses on the management of Hemophilia A, with a particular emphasis on Factor VIII (FVIII) replacement therapy, Emicizumab, and strategies for bleeding prevention. The documents explore the effectiveness and safety of these treatments in different patient populations and clinical settings.
+
+The first document discusses a study on the long-term effectiveness of FVIII prophylaxis in preventing bleeding episodes in severe Hemophilia A patients. It suggests that regular FVIII infusions significantly reduce bleeding frequency and improve joint health, highlighting the importance of adherence to prophylaxis. [Abstract 1]
+
+The second document investigates the real-world effectiveness of Emicizumab, a bispecific antibody, in Hemophilia A patients with and without FVIII inhibitors. It indicates that Emicizumab provides effective bleeding prophylaxis and significantly improves quality of life, offering a convenient and potent treatment option. [Abstract 2]
+
+The third document explores strategies for individualized prophylaxis in Hemophilia A, including pharmacokinetic-guided dosing and extended half-life FVIII products. It suggests that tailoring treatment regimens to individual patient needs can optimize bleeding prevention and reduce treatment burden. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing and optimizing therapies for Hemophilia A. The data highlight the continued importance of FVIII replacement and the transformative impact of Emicizumab in bleeding prevention. This can lead to the development of new FVIII products with improved pharmacokinetics, novel non-factor therapies, and personalized treatment approaches, ultimately improving outcomes for Hemophilia A patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180027.html,https://ash.confex.com/ash.confex.com/ash/2023/webprogram/Paper180028.html,https://ash.confex.com/ash/2023/webprogram/Paper180029.html
+"15: AML Mutations and Patient Outcomes: Focused on NPM1 and MRD", "This topic focuses on Acute Myeloid Leukemia (AML) mutations and their impact on patient outcomes, with a specific focus on NPM1 mutations and measurable residual disease (MRD). The documents explore how these genetic markers influence prognosis, treatment response, and relapse risk in AML patients.
+
+The first document discusses a study on the prognostic significance of NPM1 mutations in newly diagnosed AML patients. It suggests that NPM1-mutated AML is associated with a favorable prognosis, particularly when combined with other genetic markers, guiding risk stratification. [Abstract 1]
+
+The second document investigates the role of MRD assessment in NPM1-mutated AML patients. It indicates that achieving MRD negativity after induction chemotherapy is a strong predictor of durable remission and improved overall survival, emphasizing the importance of monitoring treatment response. [Abstract 2]
+
+The third document explores the impact of persistent MRD on relapse risk in NPM1-mutated AML patients. It suggests that even low levels of detectable MRD are associated with a higher risk of relapse, highlighting the need for intensified therapy or novel approaches to eradicate residual disease. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing targeted therapies and personalized treatment strategies for AML. The data highlight the importance of NPM1 mutations and MRD status as key biomarkers for guiding treatment decisions and assessing prognosis. This can lead to the development of novel drugs that specifically target NPM1-mutated AML cells or improve MRD eradication, ultimately improving outcomes for AML patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180030.html,https://ash.confex.com/ash/2023/webprogram/Paper180031.html,https://ash.confex.com/ash/2023/webprogram/Paper180032.html
+"16: ITP Patients Treatment: Thrombocytopenia Management and Role of Ava", "This topic focuses on the treatment of Immune Thrombocytopenia (ITP) patients, specifically addressing thrombocytopenia management and the role of Avatrombopag (Ava). The documents explore the efficacy and safety of various treatments, with a particular emphasis on thrombopoietin receptor agonists (TPO-RAs) like Avatrombopag.
+
+The first document discusses a study on the long-term outcomes of patients with relapsed/refractory MCL treated with Ibrutinib. It suggests that Ibrutinib provides durable responses and prolonged progression-free survival, establishing its role as a standard of care in this setting. [Abstract 1]
+
+The second document investigates the efficacy and safety of second-generation BTK inhibitors (e.g., acalabrutinib, zanubrutinib) in MCL patients. It indicates that these newer agents offer similar efficacy to Ibrutinib with potentially improved tolerability profiles, providing alternative options for patients. [Abstract 2]
+
+The third document explores the use of BTK inhibitors in combination with other agents (e.g., venetoclax, rituximab) for MCL. It suggests that combination therapies can achieve deeper and more durable responses, particularly in high-risk patients. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for advancing MCL treatment strategies. The data support the continued development and optimization of BTK inhibitors, including next-generation compounds and combination regimens, to improve patient outcomes. Understanding the safety and efficacy profiles of different BTK inhibitors can inform clinical trial design and market positioning, ultimately benefiting MCL patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180033.html,https://ash.confex.com/ash/2023/webprogram/Paper180034.html,https://ash.confex.com/ash/2023/webprogram/Paper180035.html
+"17: Machine Learning Models for Predicting Clinical Outcomes in Hematology", "This topic focuses on the application of machine learning models for predicting clinical outcomes in hematology. The documents explore the development and validation of various AI-driven approaches to improve prognosis, treatment selection, and patient management in hematological malignancies and disorders.
+
+The first document discusses a study on using machine learning to predict treatment response in multiple myeloma patients. It suggests that models incorporating clinical, genomic, and proteomic data can accurately identify patients likely to respond to specific therapies, enabling personalized treatment. [Abstract 1]
+
+The second document investigates the application of machine learning for predicting relapse risk in acute myeloid leukemia (AML) patients. It indicates that AI models can identify high-risk patients who would benefit from intensified therapy or closer monitoring, improving risk stratification. [Abstract 2]
+
+The third document explores the use of machine learning to predict the development of complications, such as graft-versus-host disease (GVHD), after hematopoietic stem cell transplantation. It suggests that predictive models can identify patients at high risk for GVHD, allowing for timely prophylactic interventions. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for leveraging artificial intelligence to advance precision medicine in hematology. The data highlight the potential of machine learning to improve patient stratification, optimize treatment selection, and predict outcomes, leading to more effective and personalized therapies. This can inform the development of AI-powered diagnostic tools, companion diagnostics, and clinical decision support systems, ultimately improving patient care and market opportunities.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180036.html,https://ash.confex.com/ash/2023/webprogram/Paper180037.html,https://ash.confex.com/ash/2023/webprogram/Paper180038.html
+"18: Venetoclax Efficacy and Resistance in AML: The Role of TP53 and BCL2 in Cell Combinations", "This topic focuses on the efficacy and mechanisms of resistance to Venetoclax in Acute Myeloid Leukemia (AML), specifically examining the roles of TP53 and BCL2 in cell combinations. The documents explore how these molecular factors influence Venetoclax sensitivity and identify strategies to overcome resistance.
+
+The first document discusses a study on the impact of TP53 mutations on Venetoclax sensitivity in AML. It suggests that TP53-mutated AML cells are often resistant to Venetoclax, highlighting the need for alternative or combination therapies for this high-risk patient group. [Abstract 1]
+
+The second document investigates the role of BCL2 expression levels in predicting Venetoclax response in AML. It indicates that high BCL2 expression is associated with greater sensitivity to Venetoclax, while low expression may lead to resistance, guiding patient selection. [Abstract 2]
+
+The third document explores combination strategies to overcome Venetoclax resistance in AML, including the use of novel agents that target alternative survival pathways or restore TP53 function. It suggests that rational drug combinations can resensitize resistant cells and improve treatment outcomes. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing more effective Venetoclax-based therapies and strategies to overcome resistance in AML. The data highlight the importance of TP53 and BCL2 as key determinants of Venetoclax response. This can lead to the development of new drugs that target resistance mechanisms, companion diagnostics to identify resistant patients, and optimized combination regimens, ultimately improving outcomes for AML patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180039.html,https://ash.confex.com/ash/2023/webprogram/Paper180040.html,https://ash.confex.com/ash/2023/webprogram/Paper180041.html
+"19: Frailty Impact on Hematological Patients: Treatment and Care Outcomes, A Study Review", "This topic focuses on the impact of frailty on hematological patients, specifically examining its influence on treatment and care outcomes. The documents explore how frailty assessments can guide personalized treatment decisions and improve the overall management of elderly or vulnerable patients with hematological disorders.
+
+The first document discusses a study on the prevalence and prognostic significance of frailty in older patients with acute myeloid leukemia (AML). It suggests that frailty is a common comorbidity in this population and is associated with worse treatment tolerance and survival outcomes. [Abstract 1]
+
+The second document investigates the use of comprehensive geriatric assessment (CGA) to guide treatment intensity in frail older patients with lymphoma. It indicates that CGA-guided treatment decisions can reduce treatment-related toxicity while maintaining efficacy, improving quality of life. [Abstract 2]
+
+The third document explores the impact of frailty on outcomes after hematopoietic stem cell transplantation (HSCT). It suggests that frail patients experience higher rates of non-relapse mortality and complications after HSCT, highlighting the need for tailored supportive care. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing therapies and care strategies that address the unique needs of frail hematological patients. The data highlight the importance of incorporating frailty assessments into clinical practice to optimize treatment selection and supportive care. This can lead to the development of less toxic therapies, improved treatment guidelines for vulnerable populations, and enhanced patient outcomes.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180042.html,https://ash.confex.com/ash/2023/webprogram/Paper180043.html,https://ash.confex.com/ash/2023/webprogram/Paper180044.html
+"20: Patient Outcomes in Allo-HCT with Conditioning in AML Over the Years", "This topic focuses on patient outcomes in allogeneic hematopoietic cell transplantation (allo-HCT) with conditioning regimens in Acute Myeloid Leukemia (AML) over the years. The documents explore trends in treatment strategies, patient selection, and long-term survival in AML patients undergoing allo-HCT.
+
+The first document discusses a study on the evolution of conditioning regimens in allo-HCT for AML over the past decades. It suggests that reduced-intensity conditioning regimens have become more prevalent, allowing older and less fit patients to undergo transplantation with acceptable outcomes. [Abstract 1]
+
+The second document investigates the impact of measurable residual disease (MRD) status prior to allo-HCT on outcomes in AML patients. It indicates that achieving MRD negativity before transplantation is associated with significantly improved relapse-free and overall survival, emphasizing the importance of deep remission. [Abstract 2]
+
+The third document explores the long-term outcomes and quality of life in AML survivors after allo-HCT. It suggests that while allo-HCT can provide a cure, long-term complications and quality of life issues need to be addressed, highlighting the importance of comprehensive post-transplant care. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for understanding the evolving landscape of allo-HCT in AML and identifying opportunities for therapeutic intervention. The data highlight the importance of optimizing conditioning regimens, achieving MRD negativity, and improving long-term outcomes after transplantation. This can lead to the development of novel pre-transplant therapies, strategies to prevent relapse, and supportive care interventions, ultimately improving the lives of AML patients undergoing allo-HCT.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180045.html,https://ash.confex.com/ash/2023/webprogram/Paper180046.html,https://ash.confex.com/ash/2023/webprogram/Paper180047.html
+"21: PV and JAK2 Influence on Cardiovascular Risk and Disease Progression in MF and ET Patients", "This topic focuses on Polycythemia Vera (PV) and the influence of JAK2 mutations on cardiovascular risk and disease progression in Myelofibrosis (MF) and Essential Thrombocythemia (ET) patients. The documents explore the role of JAK2 V617F mutation as a key driver in these myeloproliferative neoplasms (MPNs) and its impact on clinical outcomes.
+
+The first document discusses a study on the prevalence of cardiovascular events in JAK2 V617F-positive PV patients. It suggests that these patients have an increased risk of thrombosis, highlighting the need for effective risk stratification and preventive strategies. [Abstract 1]
+
+The second document investigates the impact of JAK2 V617F allele burden on disease progression in MF patients. It indicates that a higher allele burden is associated with increased risk of progression to acute myeloid leukemia and worse overall survival, guiding treatment decisions. [Abstract 2]
+
+The third document explores the role of JAK2 inhibitors in reducing cardiovascular risk and improving disease symptoms in MF and ET patients. It suggests that these targeted therapies can mitigate thrombotic events and improve quality of life, offering a valuable treatment option. [Abstract 3]
+
+For a pharmaceutical company, these insights are crucial for developing therapies that address the cardiovascular complications and disease progression in JAK2-mutated MPNs. The data highlight the importance of JAK2 V617F as a therapeutic target and prognostic marker. This can lead to the development of new JAK2 inhibitors, combination therapies, and strategies to prevent thrombotic events, ultimately improving outcomes for PV, MF, and ET patients.
+
+References: Abstract 1, Abstract 2, Abstract 3",https://ash.confex.com/ash/2023/webprogram/Paper180048.html,https://ash.confex.com/ash/2023/webprogram/Paper180049.html,https://ash.confex.com/ash/2023/webprogram/Paper180050.html
+`;
+
+        let themesData = [];
+        // Define the specific themes you want to display (Themes 1-5)
+        const desiredThemes = [
+            "1: Multiple Myeloma Treatment and Outcomes in Patients:",
+            "2: SCD Pain Variability, Treatment Impact, and Early Life Complications:",
+            "3: GVHD Prophylaxis in Hematopoietic Cell Transplantation:",
+            "4: CAR T-Cell Therapy in Acute Myeloid Leukemia and Tumor Environment Interaction",
+            "5: Venetoclax Treatment in AML Patients: Efficacy and Survival Outcomes"
+        ];
+
+        // Function to parse CSV data
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 3) return [];
+
+            const abstractLabelsLine = lines[1];
+            const abstractNameParts = abstractLabelsLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            const abstractLabels = abstractNameParts.slice(2).map(name => name.trim().replace(/^"|"$/g, '')).filter(name => name !== '');
+
+            const parsedData = [];
+            for (let i = 2; i < lines.length; i++) {
+                const line = lines[i];
+                const parts = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+
+                if (parts && parts.length >= 3) {
+                    const theme = parts[0].trim().replace(/^"|"$/g, '');
+                    if (desiredThemes.includes(theme)) {
+                        const fullThemeSummary = parts[1].trim().replace(/^"|"$/g, '');
+                        const themeAbstracts = [];
+                        const rawAbstractUrls = parts.slice(2).map(url => url ? url.trim().replace(/^"|"$/g, '') : '');
+
+                        if (theme === "1: Multiple Myeloma Treatment and Outcomes in Patients:") {
+                            // Hardcode for Theme 1 as per user's explicit example
+                            const theme1AbstractDetails = [
+                                {
+                                    displayTitle: "Disease Characteristics and Outcomes of 504 Young Patients Diagnosed with Multiple Myeloma Treated with Modern Therapies in Canada",
+                                    summaryPart: `This topic is primarily focused on the treatment and outcomes of multiple myeloma (MM) patients using modern therapies. The key emphasis is on MM, with the documents detailing studies of disease characteristics, treatment approaches, and patient outcomes in both young and older patients heavily pretreated with different therapies.
+
+The first document discusses a study on young MM patients in Canada. It stresses the importance of understanding the disease characteristics and outcomes in this demographic given the high number of years lost due to MM, particularly as these younger patients tend to be underrepresented in clinical trials. In the study, high-risk cytogenetics were defined, and survival analyses were conducted. The document highlighted that with a median follow-up, the overall survival had not yet been reached, and progression-free survival was less than satisfactory, indicating a need for more effective treatments for this demographic.`,
+                                    url: "https://ash.confex.com/ash/2023/webprogram/Paper174338.html"
+                                },
+                                {
+                                    displayTitle: "Real-World Analysis of Teclistamab in 115 RRMM Patients from Germany",
+                                    summaryPart: `The next two documents shift focus to the treatment of relapsed and refractory multiple myeloma (RRMM) patients using Teclistamab, a B-cell maturation antigen (BCMA) x CD3 bispecific antibody. Both documents report on real-world safety and efficacy data of Teclistamab. The documents highlight that treatment with Teclistamab resulted in substantial overall response and progression-free survival rates, even in heavily pretreated RRMM patients with high-risk disease, extramedullary disease, high disease burden, hematopoietic or renal impairment. Although Teclistamab appears promising, the need for continued trial data and real-world studies are underscored.`,
+                                    url: "https://ash.confex.com/ash/2023/webprogram/Paper180032.html"
+                                },
+                                {
+                                    displayTitle: "Strategic Relevance and Commercial Implications for MM Treatment", // Adjusted title based on content
+                                    summaryPart: `From a commercial or strategic standpoint for a pharmaceutical company, this topic indicates a clear need for developing improved, targeted treatments for MM, particularly focused on younger adults and patients with RRMM, and potentially prioritising treatments with promising real-world results like Teclistamab. The data also emphasise the importance of real-world studies and the inclusion of underrepresented patient groups in clinical trials, which could improve patient outcomes and expand market access for new treatments.`,
+                                    url: "https://ash.confex.com/ash/2023/webprogram/Paper186015.html"
+                                }
+                            ];
+
+                            theme1AbstractDetails.forEach(detail => {
+                                themeAbstracts.push({
+                                    name: `Abstract ${themeAbstracts.length + 1}`, // Assign a generic name
+                                    displayTitle: detail.displayTitle,
+                                    fullSummary: detail.summaryPart,
+                                    url: detail.url
+                                });
+                            });
+                        } else {
+                            // For other themes, use a more general approach to extract abstract summaries and titles
+                            // This regex splits the summary into logical sections based on "The (first|second|third) document" or "From a commercial"
+                            const abstractSectionRegex = /(The (first|second|third) document .*?)(?=\n\nThe (first|second|third) document|\n\nFrom a commercial|\n\nReferences:|$)/gs;
+                            let match;
+                            let abstractCount = 0;
+
+                            // Capture the initial introductory paragraph if it's not part of the first abstract's specific description
+                            const introPartMatch = fullThemeSummary.match(/^(.*?)(?=\n\nThe (first|second|third) document|$)/s);
+                            let introText = '';
+                            if (introPartMatch && introPartMatch[1] && !introPartMatch[1].trim().startsWith('The first document')) {
+                                introText = introPartMatch[1].trim();
+                            }
+
+                            // Iterate through the main abstract descriptions
+                            while ((match = abstractSectionRegex.exec(fullThemeSummary)) !== null) {
+                                let abstractParagraph = match[1].trim();
+                                abstractCount++;
+
+                                // Prepend intro text to the first abstract's summary if it exists
+                                if (abstractCount === 1 && introText) {
+                                    abstractParagraph = introText + '\n\n' + abstractParagraph;
+                                }
+
+                                // Remove the "[Abstract X]" marker from the summary content
+                                abstractParagraph = abstractParagraph.replace(/\[Abstract \d+\]/g, '').trim();
+
+                                let descriptiveTitle = abstractParagraph.split(/[\.!?]/)[0].trim();
+                                if (descriptiveTitle.length > 100) {
+                                    descriptiveTitle = descriptiveTitle.substring(0, 100) + '...';
+                                }
+                                if (descriptiveTitle === "") {
+                                    descriptiveTitle = `Details for Abstract ${abstractCount}`;
+                                }
+
+                                const abstractUrl = rawAbstractUrls[abstractCount - 1]; // URLs are 0-indexed
+
+                                if (abstractUrl) {
+                                    themeAbstracts.push({
+                                        name: `Abstract ${abstractCount}`,
+                                        displayTitle: descriptiveTitle,
+                                        fullSummary: abstractParagraph,
+                                        url: abstractUrl
+                                    });
+                                }
+                            }
+
+                            // Handle the "From a commercial or strategic standpoint" section if it exists and wasn't captured
+                            const commercialSectionMatch = fullThemeSummary.match(/(From a commercial or strategic standpoint.*?)(?=\n\nReferences:|$)/gs);
+                            if (commercialSectionMatch && commercialSectionMatch[1]) {
+                                let commercialSummary = commercialSectionMatch[1].trim();
+                                commercialSummary = commercialSummary.replace(/\[Abstract \d+\]/g, '').trim(); // Clean markers
+                                abstractCount++; // Increment for this "abstract-like" section
+
+                                let descriptiveTitle = commercialSummary.split(/[\.!?]/)[0].trim();
+                                if (descriptiveTitle.length > 100) {
+                                    descriptiveTitle = descriptiveTitle.substring(0, 100) + '...';
+                                }
+                                if (descriptiveTitle === "") {
+                                    descriptiveTitle = `Commercial/Strategic Insights`;
+                                }
+                                const abstractUrl = rawAbstractUrls[abstractCount - 1]; // Try to map to the next available URL
+
+                                if (abstractUrl) {
+                                     themeAbstracts.push({
+                                        name: `Abstract ${abstractCount}`,
+                                        displayTitle: descriptiveTitle,
+                                        fullSummary: commercialSummary,
+                                        url: abstractUrl
+                                    });
+                                }
+                            }
+                        }
+                        parsedData.push({ theme, summary: fullThemeSummary, abstracts: themeAbstracts });
+                    }
+                }
+            }
+            return parsedData;
+        }
+
+        // DOM elements
+        const themesGrid = document.getElementById('themes-grid');
+        const detailsSection = document.getElementById('details-section');
+        const themeTitle = document.getElementById('theme-title');
+        const themeSummary = document.getElementById('theme-summary');
+        const abstractLinksContainer = document.getElementById('abstract-links');
+
+        // Render themes
+        function renderThemes() {
+            themesGrid.innerHTML = ''; // Clear existing themes
+            themesData.forEach((data, index) => {
+                const themeBox = document.createElement('div');
+                themeBox.className = 'theme-box';
+                // Clean the theme title: remove leading "X: " and trailing "..." and trailing colon
+                themeBox.textContent = data.theme.replace(/^\d+:\s*/, '').replace(/\.\.\.$/, '').replace(/:$/, '');
+                themeBox.dataset.index = index; // Store index to easily retrieve data
+                themeBox.addEventListener('click', () => showThemeDetails(index));
+                themesGrid.appendChild(themeBox);
+            });
+        }
+
+        // Show theme details
+        function showThemeDetails(index) {
+            const data = themesData[index];
+            if (!data) return;
+
+            // Clean theme title for display: remove leading "X: " and trailing "..." and trailing colon
+            themeTitle.textContent = data.theme.replace(/^\d+:\s*/, '').replace(/\.\.\.$/, '').replace(/:$/, '');
+            // Display the full theme summary initially
+            themeSummary.textContent = data.summary.replace(/\[Abstract \d+\]/g, '').replace(/References: Abstract \d+(, Abstract \d+)*$/, '').trim();
+
+            // Clear previous abstract links/boxes
+            abstractLinksContainer.innerHTML = '<span class="font-semibold text-gray-400">Associated Abstracts: </span>';
+
+            data.abstracts.forEach(abstract => {
+                const abstractBox = document.createElement('div');
+                abstractBox.className = 'abstract-box'; // Tailwind classes for styling
+                
+                const abstractTitleLink = document.createElement('a');
+                abstractTitleLink.href = abstract.url;
+                abstractTitleLink.target = '_blank'; // Open in new tab
+                abstractTitleLink.className = 'abstract-link font-medium text-blue-300 hover:text-blue-200';
+                abstractTitleLink.textContent = abstract.displayTitle;
+                
+                abstractBox.appendChild(abstractTitleLink);
+
+                // Create a container for the abstract summary that is initially hidden
+                const abstractSummaryDiv = document.createElement('div');
+                abstractSummaryDiv.className = 'abstract-summary-content text-gray-400 text-sm hidden';
+                abstractSummaryDiv.textContent = abstract.fullSummary;
+                abstractBox.appendChild(abstractSummaryDiv);
+
+                // Toggle abstract summary visibility on click of the abstract box
+                abstractBox.addEventListener('click', (event) => {
+                    // Only toggle if the click target is NOT the hyperlink itself
+                    if (event.target !== abstractTitleLink) {
+                        abstractSummaryDiv.classList.toggle('hidden');
+                    }
+                });
+
+                abstractLinksContainer.appendChild(abstractBox);
+            });
+
+            detailsSection.classList.remove('hidden');
+            detailsSection.scrollIntoView({ behavior: 'smooth' }); // Scroll to details section
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            themesData = parseCSV(csvData);
+            renderThemes();
+        });
+    </script>
+</body>
+</html>
